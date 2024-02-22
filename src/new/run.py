@@ -1,17 +1,19 @@
-# Utworzenie instancji klasy PerformanceTester dla URL 'http://httpbin.org/get' i metody GET
-from PerformanceTester import PerformanceTester
+from src.new.PerformanceTester import PerformanceTester
 
-tester = PerformanceTester(url='http://httpbin.org/get', method='GET')
 
-# Definicja scenariusza testowego
-scenario = [
-    (1, 10),  # 1 użytkownik przez 10 sekund
-    (2, 10),  # 2 użytkowników przez kolejne 10 sekund
-    (3, 10)   # 3 użytkowników przez kolejne 10 sekund
-]
+class Run:
+    def __init__(self, url):
+        self.tester = PerformanceTester(url)
 
-# Uruchomienie scenariusza testowego
-tester.run_scenario(scenario)
+    def start_test(self, scenario):
+        self.tester.run_scenario(scenario)
+        self.tester.save_results()
 
-# Zapisanie wyników testu do pliku CSV
-tester.save_results('test_results.csv')
+
+# Przykład użycia
+if __name__ == "__main__":
+    url = "http://httpbin.org/get"
+    scenario = [(1, 10), (2, 10),
+                (3, 10)]  # Scenariusz: 1 użytkownik przez 10 sekund, potem 2 przez 10 sekund, potem 3 przez 10 sekund
+    runner = Run(url)
+    runner.start_test(scenario)

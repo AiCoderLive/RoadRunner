@@ -15,7 +15,7 @@ def parse_date(x):
 
 
 # Wczytanie danych z pliku CSV, daty i godziny jako typ 'object'
-df = pd.read_csv('test_results.csv', dtype={'StartTime': 'object', 'EndTime': 'object'})
+df = pd.read_csv('results.csv', dtype={'StartTime': 'object', 'EndTime': 'object'})
 
 # Konwersja na typ daty i godziny z określeniem formatu
 df['StartTime'] = pd.to_datetime(df['StartTime'], format='%H:%M:%S')
