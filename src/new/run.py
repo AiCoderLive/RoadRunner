@@ -13,7 +13,7 @@ class Run:
 # Przykład użycia
 if __name__ == "__main__":
     url = "http://httpbin.org/get"
-    scenario = [(1, 10), (2, 10),
+    scenario = [(1, 10), (2, 10), (0, 30),
                 (3, 10)]  # Scenariusz: 1 użytkownik przez 10 sekund, potem 2 przez 10 sekund, potem 3 przez 10 sekund
     runner = Run(url)
     runner.start_test(scenario)

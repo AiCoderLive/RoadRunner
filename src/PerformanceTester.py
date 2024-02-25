@@ -46,10 +46,12 @@ class PerformanceTester:
             for t in threads:
                 t.join()
 
-    def save_results(self, filename='C:\\Repo\\GitHub\\RoadRunner\\src\\new\\results.csv'):
-        with open(filename, mode='w', newline='') as file:
+    def save_results(self, filename='results.csv'):
+        with open(filename, mode='a', newline='') as file:  # Change mode to 'a' for appending
             fieldnames = ['StartTime', 'EndTime', 'ResponseTime']
             writer = csv.DictWriter(file, fieldnames=fieldnames)
-            writer.writeheader()
+            if file.tell() == 0:  # Write header only if file is empty
+                writer.writeheader()
             for result in self.results:
                 writer.writerow(result)
+            self.results = []  # Clear results after writing
