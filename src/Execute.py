@@ -1,17 +1,18 @@
 import requests
 import time
-import threading
 import csv
 from datetime import datetime
 
 
 class Scenario:
     def __init__(self, name):
+        self.response = None
         self.name = name
         self.url = ""
-        self.method = ""
+        self.method = "GET"
         self.headers = {}
-        self.body = ""
+        self.body = None
+        self.response_key = None
 
     def set_url(self, url):
         self.url = url
@@ -29,64 +30,68 @@ class Scenario:
         self.body = body
         return self
 
+    def save(self, key):
+        self.response_key = key
+        return self
 
-class Speed:
-    def __init__(self):
-        self.scenarios = []
-        self.times = []
+    def print_response(self):
+        print(f"Response from {self.url}: {self.response}")
+        return self
 
-    def run(self, users, duration):
-        self.times.append((users, duration))
+    def execute(self, user_id):
+        start_time = datetime.now()
+        if self.method == "GET":
+            response = requests.get(self.url, headers=self.headers)
+        elif self.method == "POST":
+            response = requests.post(self.url, data=self.body, headers=self.headers)
+        elif self.method == "PUT":
+            response = requests.put(self.url, data=self.body, headers=self.headers)
+        end_time = datetime.now()
+
+        response_time = (end_time - start_time).total_seconds() * 1000
+        print(f"URL: {self.url}, Status Code: {response.status_code}, Response Time: {response_time}ms")
+
+        if self.response_key and self.response_key in response.json():
+            global id
+            id = response.json()[self.response_key]
+
+        with open('results.csv', mode='a', newline='') as file:
+            writer = csv.writer(file)
+            writer.writerow(
+                [user_id, self.url, start_time.strftime('%H:%M:%S:%f')[:-3], end_time.strftime('%H:%M:%S:%f')[:-3],
+                 format(response_time, '.2f')])
+
+        self.response = response.text
         return self
 
 
-def send_request(scenario, user_number):
-    start_time = datetime.now()
-    response = requests.request(method=scenario.method, url=scenario.url, headers=scenario.headers, data=scenario.body)
-    end_time = datetime.now()
-    duration = (end_time - start_time).total_seconds() * 1000  # Konwersja na milisekundy
+class Speed:
+    scenarios = []
 
-    print(f"User {user_number}: {scenario.url} - Status Code: {response.status_code}, Response Time: {duration}ms")
-    return {
-        'VuserNumber': user_number,
-        'StartTime': start_time.strftime("%H:%M:%S:%f")[:-3],
-        'EndTime': end_time.strftime("%H:%M:%S:%f")[:-3],
-        'ResponseTime[ms]': f"{duration:.2f}"
-    }
+    @staticmethod
+    def run(user_id, duration):
+        start_time = time.time()
+        while time.time() - start_time < duration:
+            for scenario in Speed.scenarios:
+                scenario.execute(user_id)
 
-
-def execute_test(scenarios, times):
-    with open('results.csv', 'w', newline='') as csvfile:
-        fieldnames = ['VuserNumber', 'StartTime', 'EndTime', 'ResponseTime[ms]']
-        writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
-        writer.writeheader()
-
-        for users, duration in times:
-            end_time = time.time() + duration
-            threads = []
-            while time.time() < end_time:
-                for user_number in range(1, users + 1):
-                    for scenario in scenarios:
-                        thread = threading.Thread(target=lambda q, arg1, arg2: q.append(send_request(arg1, arg2)),
-                                                  args=(results, scenario, user_number))
-                        threads.append(thread)
-                        thread.start()
-                        time.sleep(0.5)  # Czekaj sekundę przed uruchomieniem kolejnego wątku
-
-            for thread in threads:
-                thread.join()  # Czekaj na zakończenie wszystkich wątków
-
-            for result in results:
-                writer.writerow(result)
+    @staticmethod
+    def add_scenario(scenario):
+        Speed.scenarios.append(scenario)
 
 
-scenarios = [
-    Scenario("First URL").set_url("http://httpbin.org/get").set_method("GET"),
-    Scenario("Second URL").set_url("http://httpbin.org/post").set_method("POST"),
-    Scenario("Third URL").set_url("http://httpbin.org/put").set_method("PUT")
-]
+# Clear or create the results.csv file
+with open('results.csv', mode='w', newline='') as file:
+    writer = csv.writer(file)
+    writer.writerow(["VuserNumber", "URL", "StartTime", "EndTime", "ResponseTime[ms]"])
 
-speed = Speed()
-speed.run(1, 10).run(2, 20).run(3, 10)
-results = []
-execute_test(scenarios, speed.times)
+# Define scenarios
+Speed.add_scenario(Scenario("First URL").set_url("http://httpbin.org/get").set_method("GET").save("X-Amzn-Trace-Id"))
+Speed.add_scenario(
+    Scenario("Second URL").set_url("http://httpbin.org/post").set_method("POST").set_headers("").set_body(
+        "X-Amzn-Trace-Id: ${id}"))
+Speed.add_scenario(Scenario("Third URL").set_url("http://httpbin.org/put").set_method("PUT").print_response())
+
+# Execute scenarios
+Speed.run(1, 10)  # 1 user for 10 seconds
+Speed.run(2, 20)  # 2 users for 20 seconds
