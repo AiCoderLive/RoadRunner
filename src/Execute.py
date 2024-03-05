@@ -107,3 +107,4 @@ Speed.scenarios.append(scenario3)
 Speed.run(1, 10)  # 1 użytkownik przez 10 sekund
 Speed.run(2, 20)  # 2 użytkowników
 Speed.run(10, 20)  # 2 użytkowników
+Speed.run(5, 20)  # 2 użytkowników
