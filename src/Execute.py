@@ -5,10 +5,8 @@ import csv
 from datetime import datetime
 
 
-# Definicja klasy Scenario
-# Modyfikacja klasy Scenario, aby umożliwić zapisywanie i przekazywanie zmiennych między scenariuszami
 class Scenario:
-    shared_variables = {}  # Słownik na zmienne współdzielone między scenariuszami
+    shared_variables = {}  # Shared variables dictionary
 
     def __init__(self, name):
         self.name = name
@@ -30,21 +28,20 @@ class Scenario:
         return self
 
     def set_body(self, body):
-        self.body = body.format(**Scenario.shared_variables)  # Użycie zmiennych współdzielonych
+        self.body = body.format(**Scenario.shared_variables)  # Use shared variables
         return self
 
     def save(self, key):
         response = self.send_request()
-        Scenario.shared_variables[key] = response.json().get(key)  # Zapis do słownika współdzielonych zmiennych
+        Scenario.shared_variables[key] = response.json().get(key)  # Save to shared variables dictionary
         return self
 
-    def printResponse(self):
+    def print_response(self):
         response = self.send_request()
         print(response.text)
         return response
 
     def send_request(self):
-        # Logika wysyłania żądania analogiczna jak poprzednio
         if self.method == "GET":
             return requests.get(self.url, headers=self.headers)
         elif self.method == "POST":
@@ -53,24 +50,17 @@ class Scenario:
             return requests.put(self.url, headers=self.headers, data=self.body)
 
 
-# Klasa do zarządzania wydajnością
-class Speed:
+class Run:
     scenarios = []
     results_file = 'results.csv'
+    lock = threading.Lock()  # Add a lock for thread-safe file writing
 
     @staticmethod
-    def run_scenario(scenario, vusers, duration):
-        start_time = time.time()
-        while time.time() - start_time < duration:
-            response = scenario.printResponse()
-            Speed.log_result(vusers, scenario.url, response)
-
-    @staticmethod
-    def run(vusers, duration):
+    def speed(vusers, duration):
         threads = []
         for _ in range(vusers):
-            for scenario in Speed.scenarios:
-                thread = threading.Thread(target=Speed.run_scenario, args=(scenario, vusers, duration))
+            for scenario in Run.scenarios:
+                thread = threading.Thread(target=Run.run_scenario, args=(scenario, vusers, duration))
                 threads.append(thread)
                 thread.start()
 
@@ -78,33 +68,54 @@ class Speed:
             thread.join()
 
     @staticmethod
+    def run_scenario(scenario, vusers, duration):
+        start_time = time.time()
+        while time.time() - start_time < duration:
+            response = scenario.print_response()
+            Run.log_result(vusers, scenario.url, response)
+
+    @staticmethod
     def log_result(vusers, url, response):
         end_time = datetime.now()
-        start_time = end_time - response.elapsed
-        with open(Speed.results_file, mode='a', newline='') as file:
-            writer = csv.writer(file)
-            writer.writerow(
-                [vusers, url, start_time.strftime('%H:%M:%S:%f')[:-3], end_time.strftime('%H:%M:%S:%f')[:-3],
-                 response.elapsed.total_seconds() * 1000])
+        try:
+            start_time = end_time - response.elapsed
+            with Run.lock:  # Lock the block of code to ensure thread safety
+                with open(Run.results_file, mode='a', newline='') as file:
+                    writer = csv.writer(file)
+                    writer.writerow(
+                        [vusers, url, start_time.strftime('%H:%M:%S:%f')[:-3], end_time.strftime('%H:%M:%S:%f')[:-3],
+                         response.elapsed.total_seconds() * 1000])
+        except Exception as e:
+            print(f"Error logging result: {e}")
+
+    @staticmethod
+    def once():
+        for scenario in Run.scenarios:
+            response = scenario.print_response()
+            # Logging with a vuser number of 1 as it's a single execution
+            Run.log_result(1, scenario.url, response)
 
 
-# Przygotowanie pliku results.csv
-with open('results.csv', mode='w', newline='') as file:
+# Initialize and prepare CSV file for results
+with open(Run.results_file, mode='w', newline='') as file:
     writer = csv.writer(file)
-    writer.writerow(["VuserNumber", "URL", "StartTime", "EndTime", "ResponseTime[ms]"])
+    writer.writerow(["VusersNumber", "URL", "StartTime", "EndTime", "ResponseTime[ms]"])
 
 # Definicja scenariuszy
-scenario1 = Scenario("First URL").set_url("http://httpbin.org/get").set_method("GET").set_headers("").save("X-Amzn-Trace-Id")
-scenario2 = Scenario("Second URL").set_url("http://httpbin.org/post").set_method("POST").set_headers("").set_body("X-Amzn-Trace-Id: {X-Amzn-Trace-Id}")
+scenario1 = Scenario("First URL").set_url("http://httpbin.org/get").set_method("GET").set_headers("").save(
+    "X-Amzn-Trace-Id")
+scenario2 = Scenario("Second URL").set_url("http://httpbin.org/post").set_method("POST").set_headers("").set_body(
+    "X-Amzn-Trace-Id: {X-Amzn-Trace-Id}")
 scenario3 = Scenario("Third URL").set_url("http://httpbin.org/put").set_method("PUT").set_headers("")
 
-# Dodanie scenariuszy do listy
-Speed.scenarios.append(scenario1)
-Speed.scenarios.append(scenario2)
-Speed.scenarios.append(scenario3)
+Run.scenarios.append(scenario1)
+Run.scenarios.append(scenario2)
+Run.scenarios.append(scenario3)
 
-# Uruchomienie testów
-Speed.run(1, 10)  # 1 użytkownik przez 10 sekund
-Speed.run(2, 20)  # 2 użytkowników
-Speed.run(10, 20)  # 2 użytkowników
-Speed.run(5, 20)  # 2 użytkowników
+# Execute tests
+Run.speed(1, 10)  # 1 user for 10 seconds
+Run.speed(2, 20)  # 2 users for 20 seconds
+Run.speed(10, 20)  # 10 users for 20 seconds
+Run.speed(20, 20)  # 5 users for 20 seconds
+
+# Run.once() # Execute all scenarios sequentially, once each
