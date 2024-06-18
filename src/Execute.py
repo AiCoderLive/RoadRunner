@@ -79,15 +79,18 @@ class Run:
         end_time = datetime.now()
         try:
             start_time = end_time - response.elapsed
+            response_time = round(response.elapsed.total_seconds() * 1000, 3)  # Round the response time
             with Run.lock:  # Lock the block of code to ensure thread safety
                 with open(Run.results_file, mode='a', newline='') as file:
                     writer = csv.writer(file)
                     writer.writerow(
-                        [vusers, url, start_time.strftime('%H:%M:%S:%f')[:-3], end_time.strftime('%H:%M:%S:%f')[:-3],
-                         response.elapsed.total_seconds() * 1000])
+                        [vusers, url, start_time.strftime('%H:%M:%S:%f')[:-3],
+                         end_time.strftime('%H:%M:%S:%f')[:-3],
+                         response_time])  # Use the rounded response time
         except Exception as e:
             print(f"Error logging result: {e}")
 
+    # Execute all scenarios sequentially, once each
     @staticmethod
     def once():
         for scenario in Run.scenarios:
