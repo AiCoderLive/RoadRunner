@@ -63,16 +63,16 @@ class Monitoring:
         def update_response_time_graph(n):
             return self.create_response_time_graph()
 
-    def create_active_users_graph(self):
-        fig = px.line(self.df, x="StartTime", y="VusersNumber", title="Aktywni użytkownicy w czasie")
-        fig.update_xaxes(tickformat="%H:%M:%S")
-        fig.update_xaxes(dtick=1000, tick0=self.df['StartTime'].min())
+    def create_active_users_graph(self, title="Aktywni użytkownicy w czasie", xaxis_format="%H:%M:%S", dtick=1000):
+        fig = px.line(self.df, x="StartTime", y="VusersNumber", title=title)
+        fig.update_xaxes(tickformat=xaxis_format)
+        fig.update_xaxes(dtick=dtick, tick0=self.df['StartTime'].min())
         return fig
 
-    def create_response_time_graph(self):
-        fig = px.line(self.df, x="EndTime", y="ResponseTime[ms]", title="Czas odpowiedzi w czasie")
-        fig.update_xaxes(tickformat="%H:%M:%S")
-        fig.update_xaxes(dtick=1000, tick0=self.df['EndTime'].min())
+    def create_response_time_graph(self, title="Czas odpowiedzi w czasie", xaxis_format="%H:%M:%S", dtick=1000):
+        fig = px.line(self.df, x="EndTime", y="ResponseTime[ms]", title=title)
+        fig.update_xaxes(tickformat=xaxis_format)
+        fig.update_xaxes(dtick=dtick, tick0=self.df['EndTime'].min())
         return fig
 
     def run(self):
