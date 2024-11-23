@@ -2,8 +2,9 @@ import requests
 import threading
 import time
 import csv
-from datetime import datetime
-
+from datetime import datetime, timedelta
+import pandas as pd
+from statsmodels.tsa.arima.model import ARIMA
 
 class Scenario:
     shared_variables = {}  # Shared variables dictionary
@@ -118,7 +119,35 @@ Run.scenarios.append(scenario3)
 # Execute tests
 Run.speed(1, 10)  # 1 user for 10 seconds
 Run.speed(2, 20)  # 2 users for 20 seconds
-Run.speed(10, 20)  # 10 users for 20 seconds
-Run.speed(20, 20)  # 5 users for 20 seconds
+# Run.speed(10, 20)  # 10 users for 20 seconds
+# Run.speed(20, 20)  # 5 users for 20 seconds
 
 # Run.once() # Execute all scenarios sequentially, once each
+
+# ARIMA Model Implementation
+
+# Load data
+data = pd.read_csv('results.csv')
+
+# Preprocess data
+data['EndTime'] = pd.to_datetime(data['EndTime'], format='%H:%M:%S:%f')
+data['ResponseTime[ms]'] = data['ResponseTime[ms]'].astype(float)
+
+# Train ARIMA model on ResponseTime
+response_times = data['ResponseTime[ms]']
+model = ARIMA(response_times, order=(5, 1, 0))
+model_fit = model.fit()
+
+# Make predictions for the next 20 seconds
+predictions = model_fit.forecast(steps=20)
+
+# Generate predicted EndTime
+last_end_time = data['EndTime'].iloc[-1]
+predicted_end_times = [last_end_time + timedelta(seconds=i) for i in range(1, 21)]
+
+# Save predictions to predicted_results.csv
+predicted_data = pd.DataFrame({
+    'EndTime': predicted_end_times,
+    'ResponseTime[ms]': predictions
+})
+predicted_data.to_csv('predicted_results.csv', index=False)
