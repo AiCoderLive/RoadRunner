@@ -5,15 +5,15 @@ import time
 
 class Run:
     results_file = 'results.csv'
-    scenarios = []
+    requests = []
     threads = []
     lock = threading.Lock()  # Initialize the lock
 
     @staticmethod
     def speed(users, duration):
-        for scenario in Run.scenarios:
+        for request in Run.requests:
             for _ in range(users):
-                thread = threading.Thread(target=Run.run_scenario, args=(scenario, users, duration))
+                thread = threading.Thread(target=Run.run_scenario, args=(request, users, duration))
                 Run.threads.append(thread)
                 thread.start()
 
@@ -46,7 +46,7 @@ class Run:
     # Execute all scenarios sequentially, once each
     @staticmethod
     def once():
-        for scenario in Run.scenarios:
-            response = scenario.print_response()
+        for request in Run.requests:
+            response = request.print_response()
             # Logging with a vuser number of 1 as it's a single execution
-            Run.log_result(1, scenario.url, response)
+            Run.log_result(1, request.url, response)

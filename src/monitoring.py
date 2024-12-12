@@ -26,7 +26,7 @@ class Monitoring:
     def load_predicted_data(self):
         try:
             self.predicted_df = pd.read_csv('C:\Repo\GitHub\RoadRunner\src\predicted_results.csv')
-            self.predicted_df['EndTime'] = pd.to_datetime(self.predicted_df['EndTime'], format='%Y-%m-%d %H:%M:%S')
+            self.predicted_df['EndTime'] = pd.to_datetime(self.predicted_df['EndTime'], format='%H:%M:%S')
         except FileNotFoundError:
             print("Error: File predicted_results.csv not found.")
             exit(1)
