@@ -1,9 +1,13 @@
+import os
+
 import dash
 from dash import dcc, html
 from dash.dependencies import Input, Output
 import pandas as pd
 import plotly.express as px
 import argparse
+
+from src.prediction_models.arima import current_dir
 
 
 class Monitoring:
@@ -25,7 +29,7 @@ class Monitoring:
 
     def load_predicted_data(self):
         try:
-            self.predicted_df = pd.read_csv('C:\Repo\GitHub\RoadRunner\src\predicted_results.csv')
+            self.predicted_df = os.path.join(current_dir, 'results', 'predicted_results.csv')
             self.predicted_df['EndTime'] = pd.to_datetime(self.predicted_df['EndTime'], format='%H:%M:%S')
         except FileNotFoundError:
             print("Error: File predicted_results.csv not found.")
