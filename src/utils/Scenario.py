@@ -6,7 +6,9 @@ import time
 
 class Scenario:
     current_dir = os.path.dirname(__file__)
-    results_file = os.path.join(current_dir, 'results', 'results.csv')
+    parent_dir = os.path.abspath(os.path.join(current_dir, os.pardir))
+    results_dir = os.path.join(parent_dir, 'results')
+    results_file = os.path.join(results_dir, 'results.csv')
     requests = []
     threads = []
     lock = threading.Lock()  # Initialize the lock
