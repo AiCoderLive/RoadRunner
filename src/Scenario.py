@@ -21,11 +21,11 @@ class Scenario:
             thread.join()
 
     @staticmethod
-    def run_scenario(scenario, vusers, duration):
+    def run_scenario(request, vusers, duration):
         start_time = time.time()
         while time.time() - start_time < duration:
-            response = scenario.print_response()
-            Scenario.log_result(vusers, scenario.url, response)
+            response = request.print_response()
+            Scenario.log_result(vusers, request.url, response)
 
     @staticmethod
     def log_result(vusers, url, response):

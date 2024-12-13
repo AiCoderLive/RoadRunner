@@ -17,16 +17,16 @@ request1 = (Request("First URL").set_url("https://www.wp.pl/").set_method("GET")
 # request3 = Scenario("Third URL").set_url("http://httpbin.org/put").set_method("PUT").set_headers("")
 
 Scenario.requests.append(request1)
-# Run.scenarios.append(request2)
-# Run.scenarios.append(request3)
+# Scenario.requests.append(request2)
+# Scenario.requests.append(request3)
 
 # Execute tests
-# Run.speed(1, 20)  # 1 user for 10 seconds
-# Run.speed(2, 20)  # 2 users for 20 seconds
-# Run.speed(5, 20)  # 10 users for 20 seconds
-# Run.speed(20, 20)  # 5 users for 20 seconds
+Scenario.speed(1, 20)  # 1 user for 10 seconds
+# Scenario.speed(2, 20)  # 2 users for 20 seconds
+# Scenario.speed(5, 20)  # 10 users for 20 seconds
+# Scenario.speed(20, 20)  # 5 users for 20 seconds
 
-Scenario.once() # Execute all scenarios sequentially, once each
+# Scenario.once() # Execute all scenarios sequentially, once each
 
 # ARIMA Model Implementation
 
