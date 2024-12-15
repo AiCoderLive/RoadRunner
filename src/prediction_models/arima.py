@@ -16,7 +16,9 @@ data['ResponseTime[ms]'] = data['ResponseTime[ms]'].astype(float)
 # Train ARIMA model on ResponseTime
 response_times = data['ResponseTime[ms]']
 model = ARIMA(response_times, order=(5, 1, 0))
-model_fit = model.fit()
+
+# Increase the number of iterations for the optimization process
+model_fit = model.fit(method_kwargs={'maxiter': 500})
 
 # Make predictions for the next 20 seconds
 predictions = model_fit.forecast(steps=20)
