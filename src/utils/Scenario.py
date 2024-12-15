@@ -1,14 +1,13 @@
 import csv
 import datetime
-import os
 import threading
 import time
 
+from src.utils.Paths import get_results_csv_file
+
+
 class Scenario:
-    current_dir = os.path.dirname(__file__)
-    parent_dir = os.path.abspath(os.path.join(current_dir, os.pardir))
-    results_dir = os.path.join(parent_dir, 'results')
-    results_file = os.path.join(results_dir, 'results.csv')
+    results_file = get_results_csv_file()
     requests = []
     threads = []
     lock = threading.Lock()  # Initialize the lock

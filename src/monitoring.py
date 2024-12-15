@@ -7,7 +7,7 @@ import pandas as pd
 import plotly.express as px
 import argparse
 
-from src.prediction_models.arima import current_dir
+from utils.Paths import get_results_csv_file
 
 
 class Monitoring:
@@ -29,8 +29,8 @@ class Monitoring:
 
     def load_predicted_data(self):
         try:
-            self.predicted_df = os.path.join(current_dir, 'results', 'predicted_results.csv')
-            self.predicted_df['EndTime'] = pd.to_datetime(self.predicted_df['EndTime'], format='%H:%M:%S')
+            self.predicted_df = pd.read_csv(os.path.join('src', 'results', 'predicted_results.csv'))
+            self.predicted_df['EndTime'] = pd.to_datetime(self.predicted_df['EndTime'], format='%H:%M:%S:%f')
         except FileNotFoundError:
             print("Error: File predicted_results.csv not found.")
             exit(1)
@@ -97,9 +97,11 @@ class Monitoring:
         fig.update_xaxes(dtick=dtick, tick0=self.df['EndTime'].min())
         return fig
 
-    def create_predicted_response_time_graph(self, title="Przewidywany czas odpowiedzi w czasie", xaxis_format="%H:%M:%S", dtick=1000):
+    def create_predicted_response_time_graph(self, title="Przewidywany czas odpowiedzi w czasie",
+                                             xaxis_format="%H:%M:%S", dtick=1000):
         fig = px.line(self.df, x="EndTime", y="ResponseTime[ms]", title=title, color_discrete_sequence=['blue'])
-        fig.add_scatter(x=self.predicted_df['EndTime'], y=self.predicted_df['ResponseTime[ms]'], mode='lines', name='Predicted Response Time', line=dict(color='red'))
+        fig.add_scatter(x=self.predicted_df['EndTime'], y=self.predicted_df['ResponseTime[ms]'], mode='lines',
+                        name='Predicted Response Time', line=dict(color='red'))
         fig.update_xaxes(tickformat=xaxis_format)
         fig.update_xaxes(dtick=dtick, tick0=self.df['EndTime'].min())
         return fig
@@ -114,5 +116,5 @@ if __name__ == '__main__':
     parser.add_argument('--use_interval', action='store_true', help='Enable interval refresh.')
     args = parser.parse_args()
 
-    monitoring = Monitoring(args.csv_file, use_interval=args.use_interval)
+    monitoring = Monitoring(get_results_csv_file(), use_interval=args.use_interval)
     monitoring.run()

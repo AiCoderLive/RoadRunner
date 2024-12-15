@@ -4,6 +4,9 @@ pip install -r requirements.txt
 ```
 Execute monitoring.py with the following command:
 ```bash
+python ./src/monitoring.py ./src/results.csv
+```
+```bash
 python ./src/monitoring.py ./src/results.csv --use_interval
 ```
 

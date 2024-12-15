@@ -1,14 +1,13 @@
 # ARIMA Model Implementation
-import os
 from datetime import timedelta
 
 import pandas as pd
-from statsmodels.sandbox.mle import data
-from statsmodels.tsa.arima_model import ARIMA
+from statsmodels.tsa.arima.model import ARIMA
+
+from src.utils.Paths import get_results_csv_file
 
 # Load data
-current_dir = os.path.dirname(__file__)
-results_file = os.path.join(current_dir, 'results', 'results.csv')
+data = pd.read_csv(get_results_csv_file())
 
 # Preprocess data
 data['EndTime'] = pd.to_datetime(data['EndTime'], format='%H:%M:%S:%f')
@@ -20,7 +19,7 @@ model = ARIMA(response_times, order=(5, 1, 0))
 model_fit = model.fit()
 
 # Make predictions for the next 20 seconds
-predictions = model_fit.forecast(steps=30)
+predictions = model_fit.forecast(steps=20)
 
 # Generate predicted EndTime
 last_end_time = data['EndTime'].iloc[-1]
