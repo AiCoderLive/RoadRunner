@@ -32,5 +32,6 @@ predicted_data = pd.DataFrame({
     'EndTime': predicted_end_times,
     'ResponseTime[ms]': predictions
 })
-predicted_data['EndTime'] = predicted_data['EndTime'].dt.strftime('%H:%M:%S:%f')
+predicted_data['EndTime'] = predicted_data['EndTime'].dt.strftime('%H:%M:%S:%f').str[:-3]
+predicted_data['ResponseTime[ms]'] = predicted_data['ResponseTime[ms]'].round(3)
 predicted_data.to_csv('predicted_results.csv', index=False)
