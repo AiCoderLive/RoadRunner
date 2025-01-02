@@ -2,6 +2,10 @@ Start the project with the following command:
 ```bash
 pip install -r requirements.txt
 ```
+Example of command to send a request to VictimServer.
+```bash
+url -X POST -H "Content-Type: application/json" -d '{"key":"value"}' http://192.168.56.103:5000/api/basic
+```
 Execute monitoring.py with the following command:
 ```bash
 python ./src/monitoring.py ./src/results.csv
