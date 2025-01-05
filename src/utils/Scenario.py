@@ -12,23 +12,30 @@ class Scenario:
     threads = []
     lock = threading.Lock()  # Initialize the lock
 
-    @staticmethod
-    def speed(users, duration):
+    def __init__(self):
+        self.interval = 0
+
+    def set_interval(self, interval):
+        self.interval = interval
+        return self
+
+    def speed(self, users, duration):
         for request in Scenario.requests:
             for _ in range(users):
-                thread = threading.Thread(target=Scenario.run_scenario, args=(request, users, duration))
+                thread = threading.Thread(target=self.run_scenario, args=(request, users, duration))
                 Scenario.threads.append(thread)
                 thread.start()
 
         for thread in Scenario.threads:
             thread.join()
+        return self
 
-    @staticmethod
-    def run_scenario(request, vusers, duration):
+    def run_scenario(self, request, vusers, duration):
         start_time = time.time()
         while time.time() - start_time < duration:
             response = request.print_response()
             Scenario.log_result(vusers, request.url, response)
+            time.sleep(self.interval)  # Use the interval between requests
 
     @staticmethod
     def log_result(vusers, url, response):
