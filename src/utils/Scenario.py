@@ -12,8 +12,9 @@ class Scenario:
     threads = []
     lock = threading.Lock()  # Initialize the lock
 
-    def __init__(self):
-        self.interval = 0
+    def __init__(self, interval=0, max_timeout=0):
+        self.interval = interval
+        self.max_timeout = max_timeout
 
     def set_interval(self, interval):
         self.interval = interval
@@ -33,7 +34,7 @@ class Scenario:
     def run_scenario(self, request, vusers, duration):
         start_time = time.time()
         while time.time() - start_time < duration:
-            response = request.print_response()
+            response = request.print_response(timeout=self.max_timeout)
             Scenario.log_result(vusers, request.url, response)
             time.sleep(self.interval)  # Use the interval between requests
 

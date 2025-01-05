@@ -32,15 +32,15 @@ class Request:
         Request.shared_variables[key] = response.json().get(key)  # Save to shared variables dictionary
         return self
 
-    def print_response(self):
-        response = self.send_request()
+    def print_response(self, timeout=None):
+        response = self.send_request(timeout=timeout)
         print(response.text)
         return response
 
-    def send_request(self):
+    def send_request(self, timeout=None):
         if self.method == "GET":
-            return requests.get(self.url, headers=self.headers)
+            return requests.get(self.url, headers=self.headers, timeout=timeout)
         elif self.method == "POST":
-            return requests.post(self.url, headers=self.headers, data=self.body)
+            return requests.post(self.url, headers=self.headers, data=self.body, timeout=timeout)
         elif self.method == "PUT":
-            return requests.put(self.url, headers=self.headers, data=self.body)
+            return requests.put(self.url, headers=self.headers, data=self.body, timeout=timeout)
