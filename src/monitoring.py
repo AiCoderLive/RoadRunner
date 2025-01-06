@@ -11,10 +11,9 @@ from utils.Paths import get_results_csv_file
 
 
 class Monitoring:
-    def __init__(self, csv_file, use_interval=True, max_timeout=1):
+    def __init__(self, csv_file, use_interval=True):
         self.csv_file = csv_file
         self.use_interval = use_interval
-        self.max_timeout = max_timeout
         self.app = dash.Dash(__name__)
         self.df = None
         self.predicted_df = None
@@ -115,8 +114,7 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Run the Monitoring app.')
     parser.add_argument('csv_file', type=str, help='Path to the CSV file.')
     parser.add_argument('--use_interval', action='store_true', help='Enable interval refresh.')
-    parser.add_argument('--max_timeout', type=int, default=0, help='Maximum timeout for server response in seconds.')
     args = parser.parse_args()
 
-    monitoring = Monitoring(get_results_csv_file(), use_interval=args.use_interval, max_timeout=args.max_timeout)
+    monitoring = Monitoring(get_results_csv_file(), use_interval=args.use_interval)
     monitoring.run()

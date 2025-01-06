@@ -19,7 +19,7 @@ request1 = (Request("First URL").set_url("https://www.wp.pl/").set_method("GET")
 Scenario.requests.append(request1)
 
 # Set interval between requests
-scenario = Scenario(max_timeout=args.max_timeout)
+scenario = Scenario()
 scenario.speed(1, 300).set_interval(10)
 # Scenario.speed(5, 300).set_interval(0.1)
 # Scenario.speed(10, 300).set_interval(0.1)

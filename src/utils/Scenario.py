@@ -10,7 +10,7 @@ class Scenario:
     results_file = get_results_csv_file()
     requests = []
     threads = []
-    lock = threading.Lock()  # Initialize the lock
+    lock = threading.Lock()
 
     def __init__(self, interval=0, max_timeout=0):
         self.interval = interval
