@@ -95,6 +95,7 @@ class Monitoring:
         fig = px.line(self.df, x="EndTime", y="ResponseTime[ms]", title=title)
         fig.update_xaxes(tickformat=xaxis_format)
         fig.update_xaxes(dtick=dtick, tick0=self.df['EndTime'].min())
+        fig.add_hline(y=self.max_timeout * 1000, line_dash="dash", line_color="red", annotation_text="Max Timeout")
         return fig
 
     def create_predicted_response_time_graph(self, title="Przewidywany czas odpowiedzi w czasie",
@@ -104,6 +105,7 @@ class Monitoring:
                         name='Predicted Response Time', line=dict(color='red'))
         fig.update_xaxes(tickformat=xaxis_format)
         fig.update_xaxes(dtick=dtick, tick0=self.df['EndTime'].min())
+        fig.add_hline(y=self.max_timeout * 1000, line_dash="dash", line_color="red", annotation_text="Max Timeout")
         return fig
 
     def run(self):
