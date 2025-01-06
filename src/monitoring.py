@@ -1,14 +1,11 @@
 import os
-
 import dash
 from dash import dcc, html
 from dash.dependencies import Input, Output
 import pandas as pd
 import plotly.express as px
 import argparse
-
 from utils.Paths import get_results_csv_file
-
 
 class Monitoring:
     def __init__(self, csv_file, use_interval=True, max_timeout=20):
@@ -39,6 +36,7 @@ class Monitoring:
     def process_data(self):
         self.df['StartTime'] = pd.to_datetime(self.df['StartTime'], format='%H:%M:%S:%f')
         self.df['EndTime'] = pd.to_datetime(self.df['EndTime'], format='%H:%M:%S:%f')
+        self.df['ResponseTime[ms]'] = self.df['ResponseTime[ms]'].apply(lambda x: min(x, self.max_timeout * 1000))
 
     def setup_app(self):
         self.load_data()
@@ -111,7 +109,6 @@ class Monitoring:
 
     def run(self):
         self.app.run_server(debug=True)
-
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Run the Monitoring app.')
