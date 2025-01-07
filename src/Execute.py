@@ -16,13 +16,22 @@ with open(Scenario.results_file, mode='w', newline='') as file:
 
 # Define scenarios
 request1 = (Request("First URL").set_url("https://www.wp.pl/").set_method("GET").set_headers(""))
+# request1 = (Request("First URL").set_url("http://192.168.56.103:5000/api/basic").set_method("GET").set_headers(""))
 Scenario.requests.append(request1)
 
+
 # Set interval between requests
-scenario = Scenario(max_timeout=args.max_timeout)
-scenario.speed(1, 300).set_interval(10)
-# Scenario.speed(5, 300).set_interval(0.1)
-# Scenario.speed(10, 300).set_interval(0.1)
+scenario = Scenario()
+scenario.speed(1, 120)
+# scenario.speed(200, 120)
+# scenario.speed(300, 120)
+# scenario.speed(400, 120)
+# scenario.speed(500, 120)
+# scenario.speed(600, 120)
+# scenario.speed(700, 120)
+# scenario.speed(800, 120)
+# scenario.speed(900, 120)
+# scenario.speed(1000, 120)
 
 # Scenario.once() # Execute all scenarios sequentially, once each
 
