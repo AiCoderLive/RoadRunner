@@ -15,23 +15,30 @@ with open(Scenario.results_file, mode='w', newline='') as file:
     writer.writerow(["VusersNumber", "URL", "StartTime", "EndTime", "ResponseTime[ms]"])
 
 # Define scenarios
-request1 = (Request("First URL").set_url("https://www.wp.pl/").set_method("GET").set_headers(""))
-# request1 = (Request("First URL").set_url("http://192.168.56.103:5000/api/basic").set_method("GET").set_headers(""))
+# request1 = (Request("First URL").set_url("https://www.wp.pl/").set_method("GET").set_headers(""))
+request1 = (Request("First URL").set_url("http://192.168.56.103:5000/api/basic").set_method("GET").set_headers(""))
 Scenario.requests.append(request1)
 
 
 # Set interval between requests
 scenario = Scenario()
-scenario.speed(1, 120)
-# scenario.speed(200, 120)
-# scenario.speed(300, 120)
-# scenario.speed(400, 120)
-# scenario.speed(500, 120)
-# scenario.speed(600, 120)
-# scenario.speed(700, 120)
-# scenario.speed(800, 120)
-# scenario.speed(900, 120)
-# scenario.speed(1000, 120)
+scenario.speed(1, 60)
+scenario.speed(20, 60)
+scenario.speed(30, 60)
+scenario.speed(40, 60)
+scenario.speed(50, 60)
+scenario.speed(60, 60)
+scenario.speed(70, 60)
+scenario.speed(80, 60)
+scenario.speed(90, 60)
+scenario.speed(100, 60)
+scenario.speed(110, 60)
+scenario.speed(120, 60)
+scenario.speed(130, 60)
+scenario.speed(140, 60)
+scenario.speed(150, 60)
+scenario.speed(160, 60)
+scenario.speed(170, 60)
 
 # Scenario.once() # Execute all scenarios sequentially, once each
 
