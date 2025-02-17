@@ -8,7 +8,7 @@ url -X POST -H "Content-Type: application/json" -d '{"key":"value"}' http://192.
 ```
 Execute monitoring.py with the following command:
 ```bash
-python ./src/monitoring.py ./src/results.csv
+python ./src/monitoring.py ./src/results/results.csv --max_time=1
 ```
 ```bash
 python ./src/monitoring.py ./src/results.csv --use_interval
