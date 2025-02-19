@@ -1,11 +1,10 @@
-import pandas as pd
-import numpy as np
-from statsmodels.tsa.statespace.sarimax import SARIMAX
-import plotly.graph_objects as go
-from datetime import timedelta
-from typing import Tuple, List
 import warnings
-from scipy.ndimage import gaussian_filter1d
+from typing import Tuple, List
+
+import numpy as np
+import pandas as pd
+import plotly.graph_objects as go
+from statsmodels.tsa.statespace.sarimax import SARIMAX
 
 warnings.filterwarnings('ignore')
 
@@ -51,12 +50,12 @@ class ResponseTimePredictor:
         """
         # Configuration parameters for prediction adjustments
         TREND_START = 1.0  # Starting multiplier for trend (keep at 1.0 to maintain initial values)
-        TREND_END = 2.0  # Final multiplier for trend (higher = steeper response time increase)
-        VARIATION_SCALE = 0.4  # Scale of continuous small variations (0.1 = 10% of std dev)
-        SPIKE_PROBABILITY = 0.01  # Probability of response time spike (0.05 = 5% chance per point)
-        SPIKE_MIN = 1.15  # Minimum multiplier for response time spikes
-        SPIKE_MAX = 1.6  # Maximum multiplier for response time spikes
-        RANDOM_WALK_SCALE = 0.2  # Scale of random walk variations (0.1 = 10% of std dev)
+        TREND_END = 1.8  # Final multiplier for trend (higher = steeper response time increase)
+        VARIATION_SCALE = 2.0  # Scale of continuous small variations (0.1 = 10% of std dev)
+        SPIKE_PROBABILITY = 0.09  # Probability of response time spike (0.05 = 5% chance per point)
+        SPIKE_MIN = 1.2  # Minimum multiplier for response time spikes
+        SPIKE_MAX = 1.8  # Maximum multiplier for response time spikes
+        RANDOM_WALK_SCALE = 0.1  # Scale of random walk variations (0.1 = 10% of std dev)
 
         # Calculate statistics from recent data
         recent_data = self.data.tail(1000)
