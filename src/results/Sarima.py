@@ -9,7 +9,7 @@ from statsmodels.tsa.statespace.sarimax import SARIMAX
 warnings.filterwarnings('ignore')
 
 
-class ResponseTimePredictor:
+class Sarima:
     def __init__(self, csv_file: str):
         """
         Initialize the predictor with data from CSV file
@@ -187,7 +187,7 @@ class ResponseTimePredictor:
 
 def main():
     # Initialize predictor
-    predictor = ResponseTimePredictor('results.csv')
+    predictor = Sarima('results.csv')
 
     # Train the model
     print("Training model...")
