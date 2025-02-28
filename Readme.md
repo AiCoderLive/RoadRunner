@@ -18,10 +18,27 @@ Problems
 - look at the data in the results.csv file. There was problem that miliseconds were not being written in the row with the rest of data, but the row below. After that monitoring.py has got a problem to read it.
 - ![img.png](img.png)
 
-To start the project"
-```bash
-conda env create -f environment.yml
-```
-```bash
-conda activate response-predictor
-```
+# RoadRunner
+
+## Quick Setup
+
+### Prerequisites
+- Miniconda or Anaconda installed on your system
+  - [Download Miniconda](https://docs.conda.io/en/latest/miniconda.html)
+
+### Automated Setup (Recommended)
+
+#### Windows:
+1. Clone this repository
+2. Run `setup-env.bat` by double-clicking or from Command Prompt
+3. Activate the environment: `conda activate road_runner`
+
+#### Linux/Mac:
+1. Clone this repository
+2. Make the setup script executable: `chmod +x setup-env.sh`
+3. Run the setup script: `./setup-env.sh`
+4. Activate the environment: `conda activate road_runner`
+
+### Manual Setup (Alternative)
+
+If the automated setup encounters issues:
