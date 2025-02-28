@@ -11,7 +11,7 @@ Execute monitoring.py with the following command:
 python ./src/monitoring.py ./src/results/results.csv --max_time=1
 ```
 ```bash
-python ./src/monitoring.py ./src/results.csv --use_interval
+python ./src/monitoring.py ./src/results/results.csv --use_interval
 ```
 
 Problems
