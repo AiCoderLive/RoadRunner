@@ -64,7 +64,7 @@ def evaluate_model(model, X_test, y_test):
 
 def main():
     # Load data
-    data = load_and_prepare_data('results.csv')
+    data = load_and_prepare_data('../../results/results.csv')
 
     # Prepare train-test split
     X = data[['VusersNumber']]

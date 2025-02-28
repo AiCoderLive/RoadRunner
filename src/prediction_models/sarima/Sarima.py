@@ -187,7 +187,7 @@ class Sarima:
 
 def main():
     # Initialize predictor
-    predictor = Sarima('results.csv')
+    predictor = Sarima('../../results/results.csv')
 
     # Train the model
     print("Training model...")
