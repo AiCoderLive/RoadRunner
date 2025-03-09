@@ -42,3 +42,5 @@ Problems
 ### Manual Setup (Alternative)
 
 If the automated setup encounters issues:
+
+pip install tensorflow==2.15.0
