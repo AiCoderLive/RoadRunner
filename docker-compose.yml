@@ -1,0 +1,31 @@
+version: '3'
+
+services:
+  # Serwis do generowania obciążenia i zbierania danych
+  data-collector:
+    build: .
+    volumes:
+      - ./src/results:/app/src/results
+    command: python ./src/Execute.py
+    restart: on-failure
+
+  # Serwis do monitorowania i wyświetlania wyników
+  monitoring:
+    build: .
+    ports:
+      - "8050:8050"
+    volumes:
+      - ./src/results:/app/src/results
+    command: python ./src/monitoring.py ./src/results/results.csv --use_interval
+    depends_on:
+      - data-collector
+
+# Serwis do predykcji LSTM wykorzystujący wszystkie dane
+  lstm-prediction:
+    build: .
+    volumes:
+      - ./src/results:/app/src/results
+      - ./model:/app/model
+    command: python ./src/complete_lstm_predictor.py
+    depends_on:
+      - data-collector
