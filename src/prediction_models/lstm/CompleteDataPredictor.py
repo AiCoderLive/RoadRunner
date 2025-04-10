@@ -9,7 +9,7 @@ import pandas as pd
 import pickle
 
 
-class LstmPredictor:
+class CompleteDataPredictor:
     def __init__(self, sequence_length=5, model_path=None, encoders_path=None):
         """
         Inicjalizacja predyktora wykorzystującego wszystkie dostępne dane.
