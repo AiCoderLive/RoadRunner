@@ -1,46 +1,132 @@
-Start the project with the following command:
-```bash
-pip install -r requirements.txt
+# RoadRunner - System Testowania i Przewidywania Wydajności
+
+System RoadRunner służy do przeprowadzania testów wydajnościowych, analizowania wyników i przewidywania czasów odpowiedzi na podstawie modelu LSTM.
+
+## Wymagania
+
+- Docker i Docker Compose
+- Git (do pobrania repozytorium)
+
+## Struktura projektu
+
 ```
-Example of command to send a request to VictimServer.
-```bash
-url -X POST -H "Content-Type: application/json" -d '{"key":"value"}' http://192.168.56.103:5000/api/basic
+roadrunner/
+├── data/               # Dane dla modeli
+├── src/                # Kod źródłowy
+│   ├── prediction_models/
+│   │   ├── lstm/       # Model LSTM
+│   │   │   ├── models/ # Zapisane modele LSTM
+│   │   │   ├── LstmResponsePredictor.py
+│   │   │   └── lstm_trainer.py  # Trening i punkt wejścia dla LSTM
+│   │   ├── arima/      # Model ARIMA
+│   │   ├── sarima/     # Model SARIMA
+│   │   └── randomForestRegression/
+│   ├── utils/          # Narzędzia pomocnicze
+│   ├── visualization/  # Wizualizacja danych
+│   ├── results/        # Wyniki testów
+│   ├── Execute.py      # Skrypt do testów wydajnościowych
+│   ├── init_directories.py  # Inicjalizacja katalogów
+│   └── visualization_server.py  # Serwer wizualizacji
+├── Dockerfile          # Definicja obrazu Docker
+├── docker-compose.yml  # Konfiguracja usług Docker
+├── docker-entrypoint.sh  # Skrypt startowy
+├── requirements.txt    # Zależności Python
+└── README.md           # Ten plik
 ```
-Execute monitoring.py with the following command:
+
+## Uruchamianie systemu
+
+### 1. Inicjalizacja projektu
+
+Sklonuj repozytorium i przejdź do katalogu projektu:
+
 ```bash
-python ./src/monitoring.py ./src/results/results.csv --max_time=1
+git clone <adres-repozytorium>
+cd roadrunner
 ```
+
+### 2. Uruchomienie środowiska Docker
+
+Aby uruchomić kompletne środowisko, wykonaj:
+
 ```bash
-python ./src/monitoring.py ./src/results/results.csv --use_interval
+docker-compose up -d
 ```
 
-Problems
-- look at the data in the results.csv file. There was problem that miliseconds were not being written in the row with the rest of data, but the row below. After that monitoring.py has got a problem to read it.
-- ![img.png](img.png)
+To polecenie uruchomi trzy usługi:
+- **visualizer** - Dashboard z wizualizacjami (dostępny na http://localhost:8050)
+- **performance-test** - Wykonanie testów wydajnościowych
+- **lstm-trainer** - Trenowanie modelu LSTM na podstawie wyników testów
 
-# RoadRunner
+### 3. Dostęp do dashboardu
 
-## Quick Setup
+Po uruchomieniu, dashboard z wizualizacjami będzie dostępny pod adresem:
 
-### Prerequisites
-- Miniconda or Anaconda installed on your system
-  - [Download Miniconda](https://docs.conda.io/en/latest/miniconda.html)
+```
+http://localhost:8050
+```
 
-### Automated Setup (Recommended)
+### 4. Zatrzymanie środowiska
 
-#### Windows:
-1. Clone this repository
-2. Run `setup-env.bat` by double-clicking or from Command Prompt
-3. Activate the environment: `conda activate road_runner`
+Aby zatrzymać i usunąć kontenery:
 
-#### Linux/Mac:
-1. Clone this repository
-2. Make the setup script executable: `chmod +x setup-env.sh`
-3. Run the setup script: `./setup-env.sh`
-4. Activate the environment: `conda activate road_runner`
+```bash
+docker-compose down
+```
 
-### Manual Setup (Alternative)
+### 5. Uruchamianie poszczególnych usług
 
-If the automated setup encounters issues:
+Można też uruchomić poszczególne usługi osobno:
 
-pip install tensorflow==2.15.0
+```bash
+# Tylko wizualizacja
+docker-compose up -d visualizer
+
+# Tylko testy wydajnościowe
+docker-compose up -d performance-test
+
+# Tylko trenowanie modelu
+docker-compose up -d lstm-trainer
+```
+
+## Konfiguracja
+
+### Parametry testów wydajnościowych
+
+Parametry testów można modyfikować w pliku `docker-compose.yml` w sekcji `performance-test`:
+
+```yaml
+performance-test:
+  environment:
+    - MAX_TIMEOUT=20  # Maksymalny timeout dla zapytań (w sekundach)
+```
+
+### Parametry trenowania modelu LSTM
+
+Parametry trenowania można modyfikować w pliku `src/lstm_trainer.py`.
+
+## Rozwiązywanie problemów
+
+### Logi
+
+Aby sprawdzić logi konkretnej usługi:
+
+```bash
+docker-compose logs visualizer
+docker-compose logs performance-test
+docker-compose logs lstm-trainer
+```
+
+### Czyszczenie danych
+
+Aby usunąć wszystkie dane i rozpocząć od nowa:
+
+```bash
+docker-compose down
+rm -rf data/* models/* src/results/*
+docker-compose up -d
+```
+
+## Rozszerzenie projektu
+
+Projekt można łatwo rozszerzyć o dodatkowe modele i funkcje, dodając odpowiednie pliki w strukturze katalogów i aktualizując `docker-compose.yml`.
