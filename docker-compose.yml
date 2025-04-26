@@ -31,8 +31,8 @@ services:
       - PYTHONUNBUFFERED=1
     networks:
       - roadrunner-network
-    depends_on:
-      - performance-test
+#    depends_on:
+#      - performance-test
     restart: on-failure
 
   # Serwis do wizualizacji wyników

@@ -89,6 +89,11 @@ docker-compose up -d performance-test
 docker-compose up -d lstm-trainer
 ```
 
+```bash
+# Tylko trenowanie modelu
+docker-compose up -d visualizer lstm-trainer
+```
+
 ## Konfiguracja
 
 ### Parametry testów wydajnościowych
