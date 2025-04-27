@@ -1,66 +1,36 @@
 version: '3.8'
 
 services:
-  # Serwis do uruchamiania testów wydajnościowych
-  performance-test:
-    build: .
+  # Serwis do wizualizacji wyników
+  visualizer:
+    image: python:3.9-slim
+    working_dir: /app
     volumes:
-      - ./src:/app/src
-      - ./data:/app/data
-      - ./src/results:/app/src/results
-    command: performance-test
+      - .:/app
+    ports:
+      - "8050:8050"
+    command: >
+      bash -c "pip install -r requirements.txt &&
+               cd /app && 
+               PYTHONPATH=/app python -u src/visualization_server.py"
     environment:
       - PYTHONUNBUFFERED=1
-      - MAX_TIMEOUT=20
-    networks:
-      - roadrunner-network
-    depends_on:
-      - visualizer
-    restart: on-failure
+      - PYTHONPATH=/app
 
   # Serwis do trenowania modelu LSTM
   lstm-trainer:
-    build: .
+    image: python:3.9-slim
+    working_dir: /app
     volumes:
-      - ./src:/app/src
-      - ./data:/app/data
-      - ./src/prediction_models/lstm/models:/app/src/prediction_models/lstm/models
-      - ./src/results:/app/src/results
-    command: lstm-trainer
+      - .:/app
+    command: >
+      bash -c "pip install -r requirements.txt &&
+               cd /app && 
+               PYTHONPATH=/app python -u src/predict_results.py"
     environment:
       - PYTHONUNBUFFERED=1
-    networks:
-      - roadrunner-network
-#    depends_on:
-#      - performance-test
-    restart: on-failure
-
-  # Serwis do wizualizacji wyników
-  visualizer:
-    build: .
-    volumes:
-      - ./src:/app/src
-      - ./data:/app/data
-      - ./src/results:/app/src/results
-    ports:
-      - "8050:8050"  # Port dla Dash
-    command: visualizer
-    environment:
-      - PYTHONUNBUFFERED=1
-    networks:
-      - roadrunner-network
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8050"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
-      start_period: 10s
+      - PYTHONPATH=/app
 
 networks:
-  roadrunner-network:
-    driver: bridge
-
-volumes:
-  data:
-  models:
-  results:
+  default:
+    driver: bridgefdsf
