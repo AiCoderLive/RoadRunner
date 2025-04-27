@@ -419,4 +419,9 @@ def update_graphs(_):
 
 # Uruchomienie serwera
 if __name__ == "__main__":
+    # Utworzenie katalogu results jeśli nie istnieje
+    os.makedirs('src/results', exist_ok=True)
+    print(f"Katalog results istnieje: {os.path.exists('src/results')}")
+
+    # Wyraźne określenie interfejsu nasłuchiwania
     app.run_server(host="0.0.0.0", port=8050, debug=True)
