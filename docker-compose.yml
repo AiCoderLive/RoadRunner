@@ -33,4 +33,4 @@ services:
 
 networks:
   default:
-    driver: bridgefdsf
+    driver: bridge
