@@ -123,3 +123,4 @@ cython_debug/
 
 # PyCharm
 .idea/core
+core
